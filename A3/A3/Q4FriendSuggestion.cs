@@ -9,7 +9,7 @@ namespace A3
 {
     public class Q4FriendSuggestion : Processor
     {
-        public Q4FriendSuggestion(string testDataName) : base(testDataName) { this.ExcludeTestCaseRangeInclusive(48, 50); }
+        public Q4FriendSuggestion(string testDataName) : base(testDataName) { }
 
         public override string Process(string inStr) =>
             TestTools.Process(inStr, (Func<long, long, long[][], long, long[][], long[]>)Solve);
