@@ -19,9 +19,9 @@ namespace A3
             Edges = edges;
             NodeCount = nodecount;
             Graph = new List<long>[nodecount];
-            GraphR= new List<long>[nodecount];
+            GraphR = new List<long>[nodecount];
             Weight = new long[nodecount, nodecount];
-            WeightR= new long[nodecount, nodecount]; 
+            WeightR = new long[nodecount, nodecount];
             for (int i = 0; i < nodecount; i++)
             {
                 Graph[i] = new List<long>();
@@ -36,82 +36,96 @@ namespace A3
                     sign = 1;
                 WeightR[g[1] - 1, g[0] - 1] = g[2];
             }
-           
+
         }
 
         public long BidirectionalDijkstra(long s, long t)
         {
             long[] dist = new long[NodeCount];
             long[] distR = new long[NodeCount];
-          for (int i = 0; i < NodeCount; i++)
+            bool[] proc = new bool[NodeCount];
+            bool[] procR = new bool[NodeCount];
+            List<long> relaxed = new List<long>();
+            List<long> relaxedR = new List<long>();
+
+            for (int i = 0; i < NodeCount; i++)
             {
                 dist[i] = int.MaxValue;
                 distR[i] = int.MaxValue;
-           }
+                proc[i] = false;
+                procR[i] = false;
+            }
+
             dist[s] = 0;
             distR[t] = 0;
-            List<long> proc = new List<long>();
-            List<long> procR = new List<long>();
 
-            SimplePriorityQueue<long, long> forward = new SimplePriorityQueue<long, long>();
-            SimplePriorityQueue<long, long> backward = new SimplePriorityQueue<long, long>();
-            for (int i = 0; i < NodeCount; i++)
-            {
-                forward.Enqueue(i + 1, dist[i]);
-                backward.Enqueue(i + 1, distR[i]);
-
-            }
             do
             {
-                long v = forward.Dequeue();
 
-                Process(forward, v, dist,proc,  Graph, Weight);
+                long v = DequeueMin(dist, proc);
+                Process(v, dist, proc, relaxed, Graph, Weight);
+                if (procR[v - 1])
+                    return ShortestPath(s, dist, relaxed, t, distR);
 
-                if (procR.Contains(v))
-                    return ShortestPath(s, dist, t, distR);
-                long vR = backward.Dequeue();
-                Process(backward, vR, distR, procR, GraphR, WeightR);
-
-                if (proc.Contains(vR))
-                    return ShortestPath(t, distR,  s, dist);
+                long vR = DequeueMin(distR, procR);
+                Process(vR, distR, procR, relaxedR, GraphR, WeightR);
+                if (proc[vR - 1])
+                    return ShortestPath(t, distR, relaxedR, s, dist);
 
             } while (true);
 
 
         }
+        private long DequeueMin(long[] dist, bool[] proc)
+        {
+            long temp = long.MaxValue;
+            long index = -1;
 
-        public long ShortestPath(long s, long[] dist,  
+            for (int i = 0; i < dist.Length; i++)
+            {
+                if (dist[i] < temp && !proc[i])
+                {
+                    temp = dist[i];
+                    index = i;
+                }
+            }
+            return index + 1;
+        }
+        public long ShortestPath(long s, long[] dist, List<long> relaxed,
             long t, long[] distR)
         {
             long distance = int.MaxValue;
             long uBest = -1;
-            for (int i = 0; i < NodeCount; i++)
-            {
 
-                if (dist[i] + distR[i] < distance)
+            foreach (var v in relaxed)
+            {
+                if (dist[v - 1] + distR[v - 1] < distance)
                 {
-                    uBest = i + 1;
-                    distance = dist[i] + distR[i];
+                    uBest = v;
+                    distance = dist[v - 1] + distR[v - 1];
                 }
-  }
+            }
             return distance;
 
         }
- private void Process(SimplePriorityQueue<long, long> q, long u, long[] dist, List<long> proc, List<long>[] Graph, long[,] Weight)
+        private void Process(long u, long[] dist, bool[] proc,
+            List<long> relaxed, List<long>[] Graph, long[,] Weight)
         {
             foreach (var v in Graph[u - 1])
             {
-               if (dist[v-1] > dist[u-1] + Weight[u-1, v-1])
+                if (dist[v - 1] > dist[u - 1] + Weight[u - 1, v - 1])
                 {
-                    dist[v-1] = dist[u-1] + Weight[u-1, v-1];
-                   q.Enqueue(v , dist[v-1]);
+                    dist[v - 1] = dist[u - 1] + Weight[u - 1, v - 1];
+
+                    relaxed.Add(v);
                 }
 
             }
-            proc.Add(u);
+            proc[u - 1] = true;
+            relaxed.Add(u);
         }
 
-       
+
         public void Dijkstra(long start, long[] dist, long[] prev)
         {
             for (int i = 0; i < NodeCount; i++)
