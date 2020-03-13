@@ -122,22 +122,19 @@ namespace A4
             return -1;
         }
 
-        private void GraphProcess(double[][] points, long v, List<(double, double)>[] g, double[] dist,
-            SimplePriorityQueue<long> pq, List<long> Relaxed, long target)
+        private void GraphProcess(double[][] points, long v, List<(double, double)>[] g,
+            double[] dist, SimplePriorityQueue<long> pq, List<long> Relaxed, long target)
         {
             foreach (var e in g[v])
             {
                 if (dist[(long)e.Item1 - 1] > dist[(long)v] + e.Item2)
                 {
-                    if (dist[(long)v] + e.Item2 >= 0)
-                    {
-                        dist[(long)e.Item1 - 1] = dist[(long)v] + e.Item2;
-                        if (pq.Contains((long)e.Item1 - 1))
-                            pq.UpdatePriority((long)e.Item1 - 1, (float)(dist[(long)e.Item1 - 1] + Pi(points, (long)e.Item1 - 1, target)));
-                        else
-                            pq.Enqueue((long)e.Item1 - 1, (float)(dist[(long)e.Item1 - 1] + Pi(points, (long)e.Item1 - 1, target)));
-                        Relaxed.Add((long)e.Item1 - 1);
-                    }
+                    dist[(long)e.Item1 - 1] = dist[(long)v] + e.Item2;
+                    if (pq.Contains((long)e.Item1 - 1))
+                        pq.UpdatePriority((long)e.Item1 - 1, (float)(dist[(long)e.Item1 - 1] + Pi(points, (long)e.Item1 - 1, target)));
+                    else
+                        pq.Enqueue((long)e.Item1 - 1, (float)(dist[(long)e.Item1 - 1] + Pi(points, (long)e.Item1 - 1, target)));
+                    Relaxed.Add((long)e.Item1 - 1);
                 }
             }
 
