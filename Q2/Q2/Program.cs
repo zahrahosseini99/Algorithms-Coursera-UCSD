@@ -11,11 +11,16 @@ namespace Q2
         }
         public static void Table(string pattern)
         {
-            Dictionary<char, int> res = new Dictionary<char, int>();
+            List<int> res = new List<int>();
+            Dictionary<char, int> table = new Dictionary<char, int>();
             for (int i = 0; i < pattern.Length; i++)
             {
-                res.Add(pattern[i], pattern.Length - i - 1);
+                table.Add(pattern[i], pattern.Length - i - 1);
             }
+
+        }
+        public void boyerMoore(string text, Dictionary<char, int> table)
+        {
 
         }
     }
