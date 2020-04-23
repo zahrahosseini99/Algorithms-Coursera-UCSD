@@ -16,7 +16,25 @@ namespace Exam1
 
         public string Solve(string firstDNA, string secondDNA)
         {
-            throw new NotImplementedException();
+            
+            long[] countf = new long[256];
+            long[] counts = new long[256];
+            for (int i = 0; i < firstDNA.Length; i++)
+            {
+                countf[firstDNA[i]]++;
+            }
+            for (int i = 0; i < secondDNA.Length; i++)
+            {
+                counts[secondDNA[i]]++;
+            }
+            if (secondDNA.Length != firstDNA.Length)
+                return (-1).ToString();
+            for (int i = 0; i < secondDNA.Length; i++)
+            {
+                if (countf[firstDNA[i]] != counts[firstDNA[i]])
+                    return (-1).ToString();
+            }
+            return 1.ToString();
         }
     }
 }
