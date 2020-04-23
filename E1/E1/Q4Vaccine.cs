@@ -7,60 +7,150 @@ namespace Exam1
 {
     public class Q4Vaccine : Processor
     {
-        public Q4Vaccine(string testDataName) : base(testDataName) { }
+        public Q4Vaccine(string testDataName) : base(testDataName) {/* this.ExcludeTestCaseRangeInclusive(6, 106); */}
 
         public override string Process(string inStr) =>
             TestTools.Process(inStr, (Func<string, string, string>)Solve);
 
         public string Solve(string dna, string pattern)
         {
-           string bwt =  "";
-            long[] sufArray = new long[dna.Length];
+            /////SUFFIX ARRAY
+
             string text = dna + "$";
-            sufArray = BuildSuffixArray(text);
-            for (int i = 0; i < dna.Length; i++)
+            long[] suffixArray = new long[text.Length];
+    
+            suffixArray = BuildSuffixArray(text);
+          
+            ////LCP
+            long[] LCP = ComputeLC(text,pattern, suffixArray);
+
+            ////LCS
+            char[] charArray = text.ToCharArray();
+            Array.Reverse(charArray);
+            string reverseText= new string(charArray);
+
+            long[] LCS = ComputeLC(reverseText,pattern,suffixArray);
+
+
+            List<long> res = new List<long>();
+
+            string result = "";
+            for (int i = 0; i < suffixArray.Length; i++)
             {
-                bwt += dna[(int)(sufArray[i] - 1 + dna.Length) % dna.Length];
+                string subString = dna.Substring((int)suffixArray[i]);
+                
+                if ((subString.Length == pattern.Length) &&
+                    (LCP[(int)suffixArray[i]] + LCS[(int)suffixArray[i]] >= pattern.Length - 1))
+                    res.Add(i);
+
             }
 
-            return "nothing";
-            //pattern matching
+            if (res.Count == 0)
+                return "No Match!";
+            else
+            {
+                
+                for (int i = 0; i < res.Count; i++)
+                {
+                    result += res[i] + " ";
+                }
+            }
+            return result.TrimEnd();
+        }
 
-          //  long[] res = new long[n];
-            long[] ranks = new long[text.Length];
-            // long[] ranks = new long[bwt.Length];
-            Dictionary<char, long> counts = new Dictionary<char, long>();
-            counts.Add('$', 0);
-            counts.Add('A', 0);
-            counts.Add('C', 0);
-            counts.Add('G', 0);
-            counts.Add('T', 0);
-
+        private long[] ComputeLC(string text,string pattern, long[] suffixArray)
+        {
+            int n = text.Length;
+            long lcp = 0;
+            long[] lcpArray = new long[n - 1];
+            long[] inverseSuffixArray = new long[n];
+            inverseSuffixArray = InvertSuffixArray(suffixArray);
+            long suffix = suffixArray[0];
             for (int i = 0; i < text.Length; i++)
             {
-                ranks[i] = counts[text[i]];
-                counts[text[i]] += 1;
-
+                long orderIndex = inverseSuffixArray[suffix];
+                if(orderIndex==n-1)
+                {
+                    lcp = 0;
+                    suffix = (suffix + 1) % n;
+                    continue;
+                }
+                string nextsuffix = pattern;
+                //pattern
+                lcp = LCPofSuffixes(text,suffix,nextsuffix,lcp-1);
+                lcpArray[orderIndex] = lcp;
+                suffix = (suffix + 1) % n;
+                   
             }
-
-            Dictionary<char, long> firstColumn = new Dictionary<char, long>();
-            long ranker = 0;
-            foreach (var item in counts)
-            {
-                firstColumn.Add(item.Key, ranker);
-                ranker += item.Value;
-            }
-
-           
-                char c = pattern[pattern.Length - 1];
-                long top = firstColumn[c];
-                long bottom = firstColumn[c] + counts[c] - 1;
-
-           //     res= bwPatternMatching(text, pattern, top, bottom, firstColumn, ranks);
-           
-           // return res;
+            return lcpArray;
 
         }
+
+        private long LCPofSuffixes(string text, long i, string pattern, long v)
+        {
+            long lcp = Math.Max(0, v);
+            int j = 0;
+            while (i+lcp<text.Length && j+lcp<pattern.Length)
+            {
+                if(text[(int)(i +lcp)]==pattern[(int)(j+lcp)])
+                {
+                    lcp = lcp + 1;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return lcp;
+        }
+
+        private long[] InvertSuffixArray(long[] suffixArray)
+        {
+            long[] pos = new long[suffixArray.Length];
+            for (int i = 0; i < pos.Length; i++)
+            {
+                pos[suffixArray[i]] = i;
+            }
+            return pos;
+        }
+
+        private long[] BuildLC(string text, long[] suffixArray)
+        {
+            int n = suffixArray.Length;
+            long[] lcp = new long[n-1];
+            long[] inverseSuffixArray = new long[n];
+            
+            for (int i = 0; i < n; i++)
+            {
+                inverseSuffixArray[suffixArray[i]] = i;
+              
+            }
+            int counter = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                if(inverseSuffixArray[i]==n-1)
+                {
+                    counter = 0;
+                    continue;
+                }
+                long j = suffixArray[inverseSuffixArray[i] + 1];
+
+                while (i+counter<n && j+counter<n && text[i+counter]==text[(int)j+counter])
+                {
+                    counter = counter + 1;
+
+                }
+                lcp[inverseSuffixArray[i]] = counter;
+
+                if (counter > 0)
+                {
+                    counter--;
+                }
+            }
+            return lcp;
+        }
+
         private long[] BuildSuffixArray(string text)
         {
             long[] order = new long[text.Length];
@@ -183,12 +273,9 @@ namespace Exam1
                 res = 0;
             else if (c == 'a')
                 res = 1;
-            else if (c == 'b')
+            else 
                 res = 2;
-            else if (c == 'G')
-                res = 3;
-            else
-                res = 4;
+           
             return res;
 
         }
