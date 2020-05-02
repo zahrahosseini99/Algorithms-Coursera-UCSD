@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "E1_Remaining": {
+      "commandName": "Executable",
+      "executablePath": "C:\\git\\AD98992\\E1_Remaining\\E1_Remaining\\bin\\Debug\\netcoreapp3.1\\E1_Remaining.exe",
+      "commandLineArgs": "\"..\\..\\..\\..\\E1_Remaining.Tests\\TestData\\E1.TD3.4\\In_1.jpg\" \"271 V\" \"lastDay\"",
+      "workingDirectory": "C:\\git\\AD98992\\E1_Remaining\\E1_Remaining\\bin\\Debug\\netcoreapp3.1"
+    }
+  }
+}
