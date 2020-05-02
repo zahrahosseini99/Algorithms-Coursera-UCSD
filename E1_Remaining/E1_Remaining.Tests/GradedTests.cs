@@ -21,7 +21,7 @@ namespace Exam1.Tests
         [TestMethod(), Timeout(12000)]
         public void SolveTest_Q2Outbreak()
         {
-            //Assert.Inconclusive();
+            Assert.Inconclusive();
             RunTest(new Q2Outbreak("TD2"));
         }
 

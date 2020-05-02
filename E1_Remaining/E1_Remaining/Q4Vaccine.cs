@@ -32,15 +32,14 @@ namespace Exam1
 
           
             List<int> res = new List<int>();
-            var max = text.Length - pLength + 1;
            
-            int textTraveller = pattern.Length + 1;
+            int textTraveller = pLength + 1;
             int patterntraveller = 0;
-            while (textTraveller<= dna.Length + 1)
+            while (textTraveller<= dnaLength + 1)
             {
-                if (zArray[textTraveller] + reverseZArray[dna.Length - patterntraveller+1] >= pLength - 1)
+                if (zArray[textTraveller] + reverseZArray[dnaLength - patterntraveller+1] >= pLength - 1)
                 {
-                    res.Add(textTraveller - pattern.Length - 1);
+                    res.Add(textTraveller - pLength - 1);
 
                 }
                 patterntraveller++;
