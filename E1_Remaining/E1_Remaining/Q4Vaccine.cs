@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using TestCommon;
+using System.Linq;
 
 namespace Exam1
 {
@@ -14,86 +15,68 @@ namespace Exam1
 
         public string Solve(string dna, string pattern)
         {
-         
+            string text = pattern + "$" + dna;
+            int n = text.Length;
+            int pLength = pattern.Length;
+            int dnaLength = dna.Length;
+            int[] zArray = new int[n];
+
+            BuildZArray(text, zArray);
+
+            string reverseDna = new string(dna.ToCharArray().Reverse().ToArray());
+            string reversePattern = new string(pattern.ToCharArray().Reverse().ToArray());
+            string reverseText = reversePattern + "$" + reverseDna;
+            int[] reverseZArray = new int[n];
+
+            BuildZArray(reverseText, reverseZArray);
+
+          
             List<int> res = new List<int>();
-            res = search(dna, pattern);
+            var max = text.Length - pLength + 1;
+           
+            int textTraveller = pattern.Length + 1;
+            int patterntraveller = 0;
+            while (textTraveller<= dna.Length + 1)
+            {
+                if (zArray[textTraveller] + reverseZArray[dna.Length - patterntraveller+1] >= pLength - 1)
+                {
+                    res.Add(textTraveller - pattern.Length - 1);
+
+                }
+                patterntraveller++;
+                textTraveller++;
+            }
+           
             if (res.Count == 0)
                 return "No Match!";
             return string.Join(" ", res);
-        }
-        public static List<int> search(string text,
-                          string pattern)
-        {
-            List<int> res = new List<int>();
-           
-            string concat = pattern + "$" + text;
 
-            int l = concat.Length;
 
-            int[] Z = new int[l];
-
-            getZarr(concat, Z);
-
-            for (int i = 0; i < l; ++i)
-            {
-
-                if (Z[i] == pattern.Length || Z[i] == pattern.Length-1 )
-                {
-                   res.Add(i - pattern.Length - 1);
-                }
-            }
-            return res;
         }
 
-        private static void getZarr(string str,
-                                    int[] Z)
+        private static void BuildZArray(string text, int[] Zarray)
         {
-
-            int n = str.Length;
-
-            int L = 0, R = 0;
-
-            for (int i = 1; i < n; ++i)
+            var n = text.Length;
+            var length = 0;
+            var z = 0;
+            for (var i = 1; i < n; ++i)
             {
-
-                if (i > R)
+                if (i <= z)
                 {
-                    L = R = i;
-
-                    while (R < n && str[R - L] == str[R])
-                    {
-                        R++;
-                    }
-
-                    Z[i] = R - L;
-                    R--;
-
+                    Zarray[i] = Math.Min(z - i + 1, Zarray[i - length]);
                 }
-                else
+                   
+                while (i + Zarray[i] < n && text[Zarray[i]] == text[i + Zarray[i]])
                 {
-
-                    int k = i - L;
-
-                    if (Z[k] < R - i + 1)
-                    {
-                        Z[i] = Z[k];
-                    }
-
-                    else
-                    {
-
-                        L = i;
-                        while (R < n && str[R - L] == str[R])
-                        {
-                            R++;
-                        }
-
-                        Z[i] = R - L;
-                        R--;
-                    }
+                    ++Zarray[i];
                 }
+                   
+                if (i + Zarray[i] - 1 <= z)
+                    continue;
+
+                length = i;
+                z = i + Zarray[i] - 1;
             }
         }
-       
     }
 }

@@ -32,24 +32,24 @@ namespace Exam1
             List<List<Color>> res2 = new List<List<Color>>();
             if (dim == 'H')
             {
-                for (int i = 0; i < input.GetLength(0); i++)
+                for (int i = 0; i < input.GetLength(1); i++)
                 {
                     res1.Add(new List<Color>());
-                    for (int j = 0; j < input.GetLength(1); j++)
+                    for (int j = 0; j < input.GetLength(0); j++)
                     {
-                        res1[i].Add(input[i, j]);
+                        res1[i].Add(input[j, i]);
                     }
                 }
                 return res1;
             }
             else//=='v'
             {
-                for (int i = 0; i < input.GetLength(1); i++)
+                for (int i = 0; i < input.GetLength(0); i++)
                 {
                     res2.Add(new List<Color>());
-                    for (int j = 0; j < input.GetLength(0); j++)
+                    for (int j = 0; j < input.GetLength(1); j++)
                     {
-                        res2[i].Add(input[j, i]);
+                        res2[i].Add(input[i, j]);
                     }
                 }
                 return res2;
@@ -93,23 +93,23 @@ namespace Exam1
             if (direction == 'V')
             {
                 res = new Color[input[0].Count, input.Count];
-                for (int i = 0; i < input[0].Count; i++)
+                for (int i = 0; i < input.Count; i++)
                 {
-                    for (int j = 0; j < input.Count; j++)
+                    for (int j = 0; j < input[0].Count; j++)
                     {
-                        res[i, j] = input[j][i];
+                        res[j, i] = input[i][j];
                     }
 
                 }
             }
             else
             {
-                res = new Color[input.Count, input[0].Count];
-                for (int i = 0; i < input.Count; i++)//x
+                res = new Color[input[0].Count, input.Count];
+                for (int i = 0; i < input.Count; i++)
                 {
-                    for (int j = 0; j < input[0].Count; j++)//y
+                    for (int j = 0; j < input[0].Count; j++)
                     {
-                        res[i, j] = input[i][j];
+                        res[j,i] = input[i][j];
                     }
                 }
             }
@@ -207,23 +207,23 @@ namespace Exam1
             List<List<double>> res = new List<List<double>>();
             if (dir == 'V')
             {
-                for (int i = 0; i < data.Count; i++)
+                for (int i = 0; i < data.Count /*x */; i++)
                 {
                     res.Add(new List<double>());
-                    for (int j = 0; j < data[0].Count; j++)
+                    for (int j = 0; j < data[0].Count /*y */; j++)
                     {
                         if ((i == 0) || (j == 0) || (i == data.Count - 1) || (j == data[0].Count - 1))
                             res[i].Add(1000);
                         else
                         {
-                            double rX = (double)data[i][j + 1].A - (double)data[i][j - 1].A;
-                            double rY = (double)data[i + 1][j].A - (double)data[i - 1][j].A;
+                            double rX = (double)data[i-1][j].A - (double)data[i-1][j ].A;
+                            double rY = (double)data[i ][j+1].A - (double)data[i ][j-1].A;
 
-                            double gX = (double)data[i][j + 1].A - (double)data[i][j - 1].A;
-                            double gY = (double)data[i + 1][j].A - (double)data[i - 1][j].A;
+                            double gX = (double)data[i - 1][j].G - (double)data[i - 1][j].G;
+                            double gY = (double)data[i][j + 1].G - (double)data[i][j - 1].G;
 
-                            double bX = (double)data[i][j + 1].A - (double)data[i][j - 1].A;
-                            double bY = (double)data[i + 1][j].A - (double)data[i - 1][j].A;
+                            double bX = (double)data[i - 1][j].B - (double)data[i - 1][j].B;
+                            double bY = (double)data[i][j + 1].B - (double)data[i][j - 1].B;
 
                             double difX = (double)Math.Pow((double)rX, 2) + (double)Math.Pow((double)gX, 2) + (double)Math.Pow((double)bX, 2);
                             double difY = (double)Math.Pow((double)rY, 2) + (double)Math.Pow((double)gY, 2) + (double)Math.Pow((double)bY, 2);
@@ -239,23 +239,23 @@ namespace Exam1
             {
 
 
-                for (int i = 0; i < data.Count; i++)
+                for (int i = 0; i < data.Count /*y*/; i++)
                 {
                     res.Add(new List<double>());
-                    for (int j = 0; j < data[0].Count; j++)
+                    for (int j = 0; j < data[0].Count/*x*/; j++)
                     {
                         if ((i == 0) || (j == 0) || (i == data.Count - 1) || (j == data[0].Count - 1))
                             res[i].Add(1000);
                         else
                         {
-                            double rY = (double)data[i][j + 1].A - (double)data[i][j - 1].A;
-                            double rX = (double)data[i + 1][j].A - (double)data[i - 1][j].A;
+                            double rY = (double)data[i+1][j].A - (double)data[i-1][j].A;
+                            double rX = (double)data[i][j+1].A - (double)data[i ][j-1].A;
 
-                            double gY = (double)data[i][j + 1].A - (double)data[i][j - 1].A;
-                            double gX = (double)data[i + 1][j].A - (double)data[i - 1][j].A;
+                            double gY = (double)data[i + 1][j].G - (double)data[i - 1][j].G;
+                            double gX = (double)data[i][j + 1].G - (double)data[i][j - 1].G;
 
-                            double bY = (double)data[i][j + 1].A - (double)data[i][j - 1].A;
-                            double bX = (double)data[i + 1][j].A - (double)data[i - 1][j].A;
+                            double bY = (double)data[i + 1][j].B - (double)data[i - 1][j].B;
+                            double bX = (double)data[i][j + 1].B - (double)data[i][j - 1].B;
 
                             double difX = (double)Math.Pow((double)rX, 2) + (double)Math.Pow((double)gX, 2) + (double)Math.Pow((double)bX, 2);
                             double difY = (double)Math.Pow((double)rY, 2) + (double)Math.Pow((double)gY, 2) + (double)Math.Pow((double)bY, 2);
