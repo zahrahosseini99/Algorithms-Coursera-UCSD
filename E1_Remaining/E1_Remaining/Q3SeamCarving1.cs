@@ -19,8 +19,6 @@ namespace Exam1
             string[] everyLine = inStr.Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries);
             int y = everyLine.Length;
 
-
-
             string[] temp = everyLine[0].Split('|');
             int x = temp.Length;
 
