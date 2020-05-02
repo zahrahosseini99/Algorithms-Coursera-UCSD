@@ -23,7 +23,7 @@ namespace Exam1
             var Lcolor = BuildList(bmp, direction);
             var res = Solve(Lcolor, dimReduction, direction);
             Utilities.SavePhoto(res, imagePath, name, direction);
-           
+
         }
 
         private static List<List<Color>> BuildList(Color[,] input, char dim)
@@ -44,12 +44,12 @@ namespace Exam1
             }
             else//=='v'
             {
-                for (int i = 0; i < input.GetLength(0); i++)
+                for (int i = 0; i < input.GetLength(1); i++)
                 {
                     res2.Add(new List<Color>());
-                    for (int j = 0; j < input.GetLength(1); j++)
+                    for (int j = 0; j < input.GetLength(0); j++)
                     {
-                        res2[i].Add(input[i, j]);
+                        res2[i].Add(input[j, i]);
                     }
                 }
                 return res2;
@@ -291,14 +291,11 @@ namespace Exam1
         // remove vertical seam from current picture
         public static void removeVerticalSeam(int[] seam, List<List<double>> eng, List<List<Color>> img)
         {
-
             for (int i = 0; i < img.Count; i++)
             {
                 img[i].RemoveAt(seam[i]);
                 eng[i].RemoveAt(seam[i]);
             }
-
-
         }
     }
 
