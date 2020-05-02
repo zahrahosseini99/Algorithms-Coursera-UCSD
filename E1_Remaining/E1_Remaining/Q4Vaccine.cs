@@ -7,7 +7,7 @@ namespace Exam1
 {
     public class Q4Vaccine : Processor
     {
-        public Q4Vaccine(string testDataName) : base(testDataName) { this.ExcludeTestCaseRangeInclusive(2, 106); }
+        public Q4Vaccine(string testDataName) : base(testDataName) { this.ExcludeTestCaseRangeInclusive(1, 106); }
 
         public override string Process(string inStr) =>
             TestTools.Process(inStr, (Func<string, string, string>)Solve);
@@ -16,47 +16,51 @@ namespace Exam1
         {
             ///////SUFFIX ARRAY
 
-            //string text = dna + "$";
-            //long[] suffixArray = new long[text.Length];
+            string text = dna + "$";
+            long[] suffixArray = new long[text.Length];
 
-            //suffixArray = BuildSuffixArray(text);
+            suffixArray = BuildSuffixArray(text);
 
-            //////LCP
-            //long[] LCP = ComputeLC(text,pattern, suffixArray);
+            ////LCP
+            long[] LCP = ComputeLC(text, pattern, suffixArray);
 
-            //////LCS
-            //char[] charArray = text.ToCharArray();
-            //Array.Reverse(charArray);
-            //string reverseText= new string(charArray);
+            ////LCS
+            char[] charArray = text.ToCharArray();
+            Array.Reverse(charArray);
+            string reverseText = new string(charArray);
 
-            //long[] LCS = ComputeLC(reverseText,pattern,suffixArray);
+            char[] pcharArray = text.ToCharArray();
+            Array.Reverse(pcharArray);
+            string reversepattern = new string(pcharArray);
+
+            long[] LCS = ComputeLC(reverseText, reversepattern, suffixArray);
 
 
-            //List<long> res = new List<long>();
+            List<long> res = new List<long>();
 
-            //string result = "";
-            //for (int i = 0; i < suffixArray.Length; i++)
-            //{
-            //    string subString = dna.Substring((int)suffixArray[i]);
+            string result = "";
+            for (int i = 0; i < suffixArray.Length; i++)
+            {
+                string subString = dna.Substring((int)suffixArray[i]);
 
-            //    if ((subString.Length == pattern.Length) &&
-            //        (LCP[(int)suffixArray[i]] + LCS[(int)suffixArray[i]] >= pattern.Length - 1))
-            //        res.Add(i);
+                if ((subString.Length == pattern.Length) &&
+                    (LCP[(int)suffixArray[i]] + LCS[(int)suffixArray[i]] >= pattern.Length - 1))
+                    res.Add(i);
 
-            //}
+            }
 
-            //if (res.Count == 0)
-            //    return "No Match!";
-            //else
-            //{
+            if (res.Count == 0)
+                return "No Match!";
+            else
+            {
 
-            //    for (int i = 0; i < res.Count; i++)
-            //    {
-            //        result += res[i] + " ";
-            //    }
-            //}
-            // return result.TrimEnd();
-            return "No Match!";
+                for (int i = 0; i < res.Count; i++)
+                {
+                    result += res[i] + " ";
+                }
+            }
+            return result.TrimEnd();
+           
         }
 
         private long[] ComputeLC(string text,string pattern, long[] suffixArray)
@@ -115,42 +119,42 @@ namespace Exam1
             return pos;
         }
 
-        private long[] BuildLC(string text, long[] suffixArray)
-        {
-            int n = suffixArray.Length;
-            long[] lcp = new long[n-1];
-            long[] inverseSuffixArray = new long[n];
+        //private long[] BuildLC(string text, long[] suffixArray)
+        //{
+        //    int n = suffixArray.Length;
+        //    long[] lcp = new long[n-1];
+        //    long[] inverseSuffixArray = new long[n];
             
-            for (int i = 0; i < n; i++)
-            {
-                inverseSuffixArray[suffixArray[i]] = i;
+        //    for (int i = 0; i < n; i++)
+        //    {
+        //        inverseSuffixArray[suffixArray[i]] = i;
               
-            }
-            int counter = 0;
+        //    }
+        //    int counter = 0;
 
-            for (int i = 0; i < n; i++)
-            {
-                if(inverseSuffixArray[i]==n-1)
-                {
-                    counter = 0;
-                    continue;
-                }
-                long j = suffixArray[inverseSuffixArray[i] + 1];
+        //    for (int i = 0; i < n; i++)
+        //    {
+        //        if(inverseSuffixArray[i]==n-1)
+        //        {
+        //            counter = 0;
+        //            continue;
+        //        }
+        //        long j = suffixArray[inverseSuffixArray[i] + 1];
 
-                while (i+counter<n && j+counter<n && text[i+counter]==text[(int)j+counter])
-                {
-                    counter = counter + 1;
+        //        while (i+counter<n && j+counter<n && text[i+counter]==text[(int)j+counter])
+        //        {
+        //            counter = counter + 1;
 
-                }
-                lcp[inverseSuffixArray[i]] = counter;
+        //        }
+        //        lcp[inverseSuffixArray[i]] = counter;
 
-                if (counter > 0)
-                {
-                    counter--;
-                }
-            }
-            return lcp;
-        }
+        //        if (counter > 0)
+        //        {
+        //            counter--;
+        //        }
+        //    }
+        //    return lcp;
+        //}
 
         private long[] BuildSuffixArray(string text)
         {

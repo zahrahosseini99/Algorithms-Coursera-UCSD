@@ -42,6 +42,7 @@ namespace Exam1
             var solved = Solve(data);
             // convert solved into output string
             string res = "";
+
             var r = new StringBuilder();
             for (int i = 0; i < solved.GetLength(0); i++)
             {
@@ -57,6 +58,7 @@ namespace Exam1
                 }
 
                 r.AppendLine(res);
+               
             }
             return r.ToString();
         }
@@ -252,13 +254,13 @@ namespace Exam1
 
             string[] temp = everyLine[1].Split(',');
             int x = temp.Length;
-            double[,] data = new double[n, x];
+            decimal[,] data = new decimal[n, x];
             for (int i = 0; i < n; i++)
             {
                 var tmp = everyLine[1 + i].Split(',');
                 for (int j = 0; j < x; j++)
                 {
-                    data[i, j] = double.Parse(tmp[j]);
+                    data[i, j] =Math.Round(decimal.Parse(tmp[j])*1.0M,2);
                 }
             }
             int number = int.Parse(everyLine[n + 1]);
@@ -298,25 +300,25 @@ namespace Exam1
         }
 
 
-        public double[,] Solve(string vOrH, int[] indexes, double[,] data)
+        public decimal[,] Solve(string vOrH, int[] indexes, decimal[,] data)
         {
             if (vOrH == "v")
             {
-                double[,] res1 = new double[data.GetLength(0), data.GetLength(1) - 1];
+                decimal[,] res1 = new decimal[data.GetLength(0), data.GetLength(1) - 1];
                 removeVerticalSeam(data, indexes, res1);
                 return res1;
             }
 
             else //=="h"
             {
-                double[,] res2 = new double[data.GetLength(0) - 1, data.GetLength(1)];
+                decimal[,] res2 = new decimal[data.GetLength(0) - 1, data.GetLength(1)];
                 removeHorizontalSeam(data, indexes, res2);
                 return res2;
             }
 
         }
 
-        private void removeHorizontalSeam(double[,] data, int[] indexes, double[,] res2)
+        private void removeHorizontalSeam(decimal[,] data, int[] indexes, decimal[,] res2)
         {
             int m = 0, n = 0;
             for (int j = 0; j < data.GetLength(1); j++)
@@ -340,7 +342,7 @@ namespace Exam1
             }
         }
 
-        private void removeVerticalSeam(double[,] data, int[] indexes, double[,] res1)
+        private void removeVerticalSeam(decimal[,] data, int[] indexes, decimal[,] res1)
         {
             int m = 0, n = 0;
             for (int j = 0; j < data.GetLength(0); j++)
