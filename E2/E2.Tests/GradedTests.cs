@@ -11,7 +11,7 @@ namespace E2.Tests
         [TestMethod(), Timeout(5000)]
         public void SolveTest_Q1MaxflowVertexCapacity()
         {
-           Assert.Inconclusive("E2.Q1 Not Solved");            
+         //  Assert.Inconclusive("E2.Q1 Not Solved");            
             RunTest(new Q1MaxflowVertexCapacity("TD1"));
         }
 

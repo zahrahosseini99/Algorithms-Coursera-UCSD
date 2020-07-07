@@ -8,32 +8,46 @@ namespace E2
     public class Q1MaxflowVertexCapacity : Processor
     {
         public Q1MaxflowVertexCapacity(string testDataName) : base(testDataName)
-        { /*this.ExcludeTestCaseRangeInclusive(16, 41);*/}
+        { }
 
         public override string Process(string inStr) =>
-            TestTools.Process(inStr, (Func<long, long, long[][],long[] , long, long, long>)Solve);
+            TestTools.Process(inStr, (Func<long, long, long[][], long[], long, long, long>)Solve);
 
-        public virtual long Solve(long nodeCount, 
-            long edgeCount, long[][] edges, long[] nodeWeight, 
-            long startNode , long endNode)
+        public virtual long Solve(long nodeCount,
+            long edgeCount, long[][] edges, long[] nodeWeight,
+            long startNode, long endNode)
         {
-            long maxflow = ComputeMaxFlow(nodeCount, edgeCount, edges, nodeWeight);
-            return maxflow;
+            long n = nodeCount * 2;
+            long[,] adj = new long[n, n];
+            ConstructGraph(adj, edgeCount, nodeCount, edges, nodeWeight);
+            return ComputeMaxFlow(adj, n);
         }
-        private long ComputeMaxFlow(long nodeCount, long edgeCount, long[][] edges, long[] nodeWeight)
+
+        private void ConstructGraph(long[,] adj, long edgeCount,
+            long nodeCount, long[][] edges, long[] nodeWeight)
         {
-            //first check for path?
-            long maxFlow = 0;
-            bool IsTherePath = false;
-            long[,] adj = ConstructGraph(edges,nodeCount, edgeCount,edgeCount,nodeWeight);
-            long newNodeCount = edgeCount * 2 + 1;
-            bool[] visited = new bool[newNodeCount];
-            long[] preV = new long[newNodeCount];
-            preV = Enumerable.Repeat((long)-1, (int)newNodeCount).ToArray();
-            IsTherePath = BFS(adj, visited, preV, 0, newNodeCount- 1);
-            while (IsTherePath)
+            long counter = nodeCount;
+            foreach (var e in edges)
             {
-                long u = newNodeCount - 1;
+                adj[e[0] - 1, counter + e[0] - 1] = nodeWeight[e[0] - 1];
+                adj[counter + e[0] - 1, e[1] - 1] = e[2];
+            }
+            adj[nodeCount - 1, counter + nodeCount - 1] = nodeWeight[nodeCount - 1];
+        }
+
+        private long ComputeMaxFlow(long[,] adj, long nodeCount)
+        {
+            long[] preV = new long[nodeCount];
+            preV = Enumerable.Repeat((long)-1, (int)nodeCount).ToArray();
+
+            bool IstherePath = false;
+            long maxFlow = 0;
+            bool[] visited = new bool[nodeCount];
+            IstherePath = BFS(adj, visited, preV, 0, nodeCount - 1);
+
+            while (IstherePath)
+            {
+                long u = nodeCount - 1;
                 long min = int.MaxValue;
                 List<long> path = new List<long>();
                 while (u != 0)
@@ -50,31 +64,15 @@ namespace E2
                     adj[path[i - 1], path[i]] += min;
                 }
                 maxFlow += min;
-                visited = Enumerable.Repeat(false, (int)newNodeCount).ToArray();
-                preV = Enumerable.Repeat((long)-1, (int)newNodeCount).ToArray();
-                IsTherePath = BFS(adj, visited, preV, 0, newNodeCount - 1);
+                for (int i = 0; i < nodeCount; i++)
+                {
+                    visited[i] = false;
+                    preV[i] = (long)-1;
+                }
+
+                IstherePath = BFS(adj, visited, preV, 0, nodeCount - 1);
             }
             return maxFlow;
-        }
-
-        private long[,] ConstructGraph(long[][] edges, long nodeCount, long edgeCount1, long edgeCount2, long[] nodeWeight)
-        {
-            long counter = nodeCount;
-            long[,] adj = new long[edgeCount1 + edgeCount1 + 1, edgeCount1 + edgeCount1 + 1];
-            foreach (var e in edges)
-            {
-                
-                adj[e[0] - 1, counter] = nodeWeight[e[0] - 1];
-                if (e[1] == nodeCount)
-                {
-                    adj[counter, edgeCount1 + edgeCount1] = e[2];
-                }
-                else
-                adj[counter, e[1] - 1] = e[2];
-                counter++;
-            }
-            adj[nodeCount - 1, counter] = nodeWeight[nodeCount - 1];
-            return adj;
         }
 
         private bool BFS(long[,] adj, bool[] visited, long[] preV, int s, long t)
